@@ -1,0 +1,9 @@
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/install/strip.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/install/local.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/edit_cache.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/package_source.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/install.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/list_install_components.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/rebuild_cache.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/package.dir
+/home/stud/src/assignments/1.REST_Server/build/CMakeFiles/Rest_server.dir
