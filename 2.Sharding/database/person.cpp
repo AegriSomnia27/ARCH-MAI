@@ -138,29 +138,39 @@ namespace database {
         }
     }
 
-    [[deprecated("Use readByMaskAsync() instead")]] 
     std::vector<Person> Person::readByMask(std::string firstName, std::string lastName) {
         try {
-            Poco::Data::Session session = database::Database::get().createSession();
-            Statement select(session);
-            std::vector<Person> result;
-            Person person;
+            std::vector<Person> persons;
+            std::vector<std::string> hints = database::Database::getAllHints();
 
-            firstName += "%";
-            lastName += "%";
-            select << "SELECT login, first_name, last_name, age FROM Person where first_name LIKE ? and last_name LIKE ?",
-                into(person.m_login),
-                into(person.m_firstName),
-                into(person.m_lastName),
-                into(person.m_age),
-                use(firstName),
-                use(lastName),
-                range(0, 1);
+            for(const auto& hint: hints) {
+                Poco::Data::Session session = database::Database::get().createSession();
+                Statement select(session);
+                Person person;
+                
+                firstName += "%";
+                lastName += "%";
+                std::string selectStr = "SELECT login, first_name, last_name, age FROM Person where first_name LIKE ? and last_name LIKE ?";
+                selectStr += hint;
+                select << selectStr,
+                    into(person.m_login),
+                    into(person.m_firstName),
+                    into(person.m_lastName),
+                    into(person.m_age),
+                    use(firstName),
+                    use(lastName),
+                    range(0, 1);
 
-            while (!select.done()) {
-                if (select.execute()) result.push_back(person);
+                while(!select.done()) {
+                    if (select.execute()) persons.push_back(person);
+                }
             }
-            return result;
+
+            std::sort(std::begin(persons), std::end(persons), [](const Person& lhs, const Person& rhs) {
+                return lhs.getLogin() < rhs.getLogin();
+            });
+
+		    return persons;
         }
         catch (Poco::Data::MySQL::ConnectionException& error) {
             std::cout << "connection:" << error.what() << std::endl;
@@ -171,54 +181,6 @@ namespace database {
             throw;
         }
     }
-
-    std::vector<Person> Person::readByMaskAsync(std::string firstName, std::string lastName) {
-		std::vector<Person> persons;
-		std::vector<std::string> hints = database::Database::getAllHints();
-
-		std::vector<std::future<std::vector<Person>>> futures;
-
-        for(const auto& hint: hints) {
-            auto handle = std::async(std::launch::async, [firstName, lastName, hint]() -> std::vector<Person> {
-                                        std::vector<Person> persons;
-										Person person;
-
-										Poco::Data::Session session = database::Database::get().createSession();
-                                        Statement select(session);
-
-                                        std::string selectStr = "SELECT login, first_name, last_name, age FROM Person where first_name LIKE ? and last_name LIKE ?";
-                                        selectStr += hint;
-
-										select << selectStr;
-
-										select.execute();
-
-                                        // persons.push_back(person);
-                                        Poco::Data::RecordSet recordSet(select);
-                                        bool more = recordSet.moveFirst();
-
-                                        while (more) {
-											persons.push_back(person);
-											more = recordSet.moveNext();
-										}
-
-                                        return persons; });
-			futures.emplace_back(std::move(handle));
-		}
-
-        // Reduce and get result values
-        for (std::future<std::vector<Person>>& res : futures) {
-			std::vector<Person> p = res.get();
-			std::copy(std::begin(p), std::end(p), std::back_inserter(persons));
-		}
-
-        // Sort values
-		std::sort(std::begin(persons), std::end(persons), [](Person& lhs, Person& rhs){
-            return lhs.getLogin() < rhs.getLogin();
-        });
-
-		return persons;
-	}
 
 	void Person::saveToMysql() {
         try {

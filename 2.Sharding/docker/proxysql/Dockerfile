@@ -1,10 +1,3 @@
-FROM proxysql/proxysql
+FROM proxysql/proxysql:latest
 
-# Update packages
-RUN apt-get update -y --fix-missing
-
-# Install common packages
-RUN apt-get install -y default-mysql-client
-
-# Set custom config
-ADD proxysql.cnf /etc/
+COPY ./proxysql.cnf /etc/proxysql.cnf

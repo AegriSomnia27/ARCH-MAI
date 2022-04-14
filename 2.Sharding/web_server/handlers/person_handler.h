@@ -112,15 +112,15 @@ public:
         else if (form.has("first_name") && form.has("last_name")) {
             std::cout << "Reading a user by mask" << std::endl;
             try {
-            std::string firstName = form.get("first_name");
-            std::string lastName = form.get("last_name");
-            auto results = database::Person::readByMask(firstName, lastName);
-            
-            Poco::JSON::Array arrayJSON;
-            for (auto result : results) {
-                arrayJSON.add(result.toJSON());
-            }
-            Poco::JSON::Stringifier::stringify(arrayJSON, ostr);
+                std::string firstName = form.get("first_name");
+                std::string lastName = form.get("last_name");
+                auto results = database::Person::readByMask(firstName, lastName);
+                
+                Poco::JSON::Array arrayJSON;
+                for (auto result : results) {
+                    arrayJSON.add(result.toJSON());
+                }
+                Poco::JSON::Stringifier::stringify(arrayJSON, ostr);
             }
             catch (...) {
                 ostr << "{ \"result\": false, \"reason\": \"not found\" }";

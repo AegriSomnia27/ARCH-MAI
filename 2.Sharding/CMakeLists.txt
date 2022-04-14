@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 
 project(rest_server C CXX)
 
-SET (EXAMPLE_BINARY "sharding")
+SET (EXAMPLE_BINARY "server")
 
 find_package(OpenSSL)
 find_package(GTest REQUIRED)

@@ -39,7 +39,10 @@ namespace database {
         m_connectionString += "host=";
         m_connectionString += Config::get().getHost();
 
-        m_connectionString += ";user=";
+		m_connectionString += ";port=";
+		m_connectionString += Config::get().getPort();
+
+		m_connectionString += ";user=";
         m_connectionString += Config::get().getLogin();
 
         m_connectionString += ";db=";

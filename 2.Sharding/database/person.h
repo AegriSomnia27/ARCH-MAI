@@ -24,7 +24,6 @@ namespace database {
         static void init();
         static Person readByLogin(std::string login);
         static std::vector<Person> readByMask(std::string firstName, std::string lastName);
-        static std::vector<Person> readByMaskAsync(std::string firstName, std::string lastName);
         static std::vector<Person> readAll();
         void saveToMysql();
 
